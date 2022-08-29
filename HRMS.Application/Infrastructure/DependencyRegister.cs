@@ -2,6 +2,7 @@
 using FluentValidation;
 using HRMS.Application.Common.Mapper;
 using HRMS.Application.Common.Utilities;
+using HRMS.Application.Services.Auth;
 using HRMS.Domain.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -17,6 +18,8 @@ namespace HRMS.Application.Infrastructure
 
             //Add helper and other services
             services.AddScoped<IHelper, Helper>();
+
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

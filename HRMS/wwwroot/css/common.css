@@ -1,0 +1,9 @@
+﻿.toast-body {
+    padding: 0.5rem;
+}
+.toast.bs-toast .toast-header {
+    padding-bottom: 0.25rem;
+}
+.validation-summary-errors ul {
+    margin-bottom: 0;
+}

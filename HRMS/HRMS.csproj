@@ -16,4 +16,8 @@
     <ProjectReference Include="..\HRMS.Infrastructure\HRMS.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\js\Vendor\" />
+  </ItemGroup>
+
 </Project>

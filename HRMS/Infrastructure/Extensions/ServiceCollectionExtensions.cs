@@ -1,8 +1,10 @@
 ﻿using HRMS.Application.Common.Interfaces;
 using HRMS.Application.Common.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace HRMS.Infrastructure.Extensions
 {
@@ -68,9 +70,11 @@ namespace HRMS.Infrastructure.Extensions
                 o.HeaderName = "RequestVerificationToken";
             });
 
-            services.ConfigureApplicationCookie(services =>
+            services.ConfigureApplicationCookie(config =>
             {
-                services.SlidingExpiration = true;
+                config.SlidingExpiration = true;
+                config.LoginPath = "/auth/login";
+                config.AccessDeniedPath = "/auth/accessdenied";
             });
 
             //Form limit
@@ -80,8 +84,13 @@ namespace HRMS.Infrastructure.Extensions
                 options.ValueLengthLimit = int.MaxValue; // 1000MB max len form data
             });
 
-            services.AddControllersWithViews(options => options.MaxModelBindingCollectionSize = int.MaxValue)
-                    .AddNewtonsoftJson(options =>
+            services.AddControllersWithViews(options =>
+            {
+                options.MaxModelBindingCollectionSize = int.MaxValue;
+                //  for adding authentication check
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            }).AddNewtonsoftJson(options =>
             {
                 options.UseMemberCasing();
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
