@@ -1,4 +1,8 @@
-﻿using HRMS.Models;
+﻿using AutoMapper;
+using HRMS.Application.Services.Employee;
+using HRMS.Domain.Models.Employee;
+using HRMS.Models;
+using HRMS.Models.Employee;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,15 +11,21 @@ namespace HRMS.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IEmployeeService _employeeService;
+        private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IEmployeeService employeeService, IMapper mapper)
         {
             _logger = logger;
+            _employeeService = employeeService;
+            _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = _mapper.Map<EmployeeDetails, EmployeeDetailsModel>(await _employeeService.Get(1));
+            ViewBag.activeMenu = "home";
+            return View(model);
         }
 
         public IActionResult Privacy()

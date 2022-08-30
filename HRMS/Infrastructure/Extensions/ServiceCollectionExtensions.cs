@@ -1,5 +1,8 @@
-﻿using HRMS.Application.Common.Interfaces;
+﻿using AutoMapper;
+using HRMS.Application.Common.Interfaces;
 using HRMS.Application.Common.Utilities;
+using HRMS.Domain.Common;
+using HRMS.Infrastructure.Mapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -102,8 +105,34 @@ namespace HRMS.Infrastructure.Extensions
 
             });
 
+            services.AddSingleton(context => AddAutoMapper(new AppDomainTypeFinder()));
+
 
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
+        }
+
+        private static IMapper AddAutoMapper(ITypeFinder typeFinder)
+        {
+            var mapperConfigurations = typeFinder.FindClassesOfType<IOrderedMapperProfile>();
+
+            //create and sort instances of mapper configurations
+            var instances = mapperConfigurations
+                            .Select(mapperConfiguration => (IOrderedMapperProfile)Activator.CreateInstance(mapperConfiguration))
+                            .OrderBy(mapperConfiguration => mapperConfiguration.Order);
+
+            //create AutoMapper configuration
+            var config = new MapperConfiguration(cfg =>
+            {
+                foreach (var instance in instances)
+                {
+                    cfg.AddProfile(instance.GetType());
+                }
+            });
+
+            //register
+            AutoMapperConfiguration.Init(config);
+
+            return AutoMapperConfiguration.Mapper;
         }
     }
 }

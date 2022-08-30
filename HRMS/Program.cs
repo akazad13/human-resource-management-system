@@ -1,6 +1,7 @@
 using HRMS;
 using HRMS.Application.Infrastructure;
 using HRMS.Infrastructure.Extensions;
+using HRMS.Infrastructure.SeedDatabase;
 using HRMS.Persistence.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,5 +39,11 @@ app.MapHealthChecks("/healthz");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+using (var scope = scopedFactory.CreateScope())
+{
+    await app.Services.SeedDefaultUserAsync(scope);
+}
 
 app.Run();

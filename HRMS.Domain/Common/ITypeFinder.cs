@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace HRMS.Domain.Infrastructure
+namespace HRMS.Domain.Common
 {
     public interface ITypeFinder
     {

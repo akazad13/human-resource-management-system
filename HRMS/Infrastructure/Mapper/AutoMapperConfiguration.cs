@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace HRMS.Application.Common.Mapper
+namespace HRMS.Infrastructure.Mapper
 {
     public static class AutoMapperConfiguration
     {

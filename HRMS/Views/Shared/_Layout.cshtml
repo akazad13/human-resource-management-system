@@ -18,26 +18,24 @@
     <!-- Core CSS -->
     <link rel="stylesheet" href="~/css/vendor/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="~/css/vendor/theme.css" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="~/css/common.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="~/css/demo.css"/>
+    <link rel="stylesheet" href="~/css/common.css" />
 </head>
 <body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
 
-    @RenderBody()
+            @{
+                await Html.RenderPartialAsync("_Sidebar");
+            }
+            @RenderBody()
+        </div>
+    </div>
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/popper/popper.js"></script>
-    <script src="~/lib/bootstrap/bootstrap.js"></script>
+    @*<script src="~/lib/popper/popper.js"></script>*@
+    <script src="~/lib/bootstrap/bootstrap.bundle.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
-    <div class="bs-toast toast toast-placement-ex m-2"
-         role="alert"
-         aria-live="assertive"
-         aria-atomic="true"
-         data-delay="2000">
-        <div class="toast-header">
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body"></div>
-    </div>
 </body>
 </html>

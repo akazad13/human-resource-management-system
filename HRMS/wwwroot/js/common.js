@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    if (!!isSuccess && isSuccess == 'false') {
+    if (typeof (isSuccess) != 'undefined' && isSuccess == 'false') {
         $('#messageDiv').removeClass("alert-info");
         $('#messageDiv').addClass("alert-danger");
         $('#messageDiv').css('display', '');

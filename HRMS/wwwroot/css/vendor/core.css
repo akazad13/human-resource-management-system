@@ -6967,8 +6967,8 @@ label.btn {
 
 .btn-pinned {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 2.75rem;
+  right: 8rem;
 }
 
 button:focus {

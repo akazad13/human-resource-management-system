@@ -1,8 +1,10 @@
 ﻿using HRMS.Application.Common.Interfaces;
+using HRMS.Application.RepositoryInterfaces;
 using HRMS.Domain.Entities;
 using HRMS.Infrastructure.Identity;
 using HRMS.Infrastructure.Persistence;
 using HRMS.Infrastructure.Services;
+using HRMS.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +44,9 @@ namespace HRMS.Persistence.Infrastructure
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             return services;
         }

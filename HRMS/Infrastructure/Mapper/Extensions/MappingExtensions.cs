@@ -1,4 +1,4 @@
-﻿namespace HRMS.Application.Common.Mapper.Extensions
+﻿namespace HRMS.Infrastructure.Mapper.Extensions
 {
     public static class MappingExtensions
     {

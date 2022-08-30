@@ -7,3 +7,6 @@
 .validation-summary-errors ul {
     margin-bottom: 0;
 }
+.menu-item {
+    cursor: pointer !important;
+}

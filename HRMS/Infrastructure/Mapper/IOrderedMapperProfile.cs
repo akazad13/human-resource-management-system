@@ -1,4 +1,4 @@
-﻿namespace HRMS.Application.Common.Mapper
+﻿namespace HRMS.Infrastructure.Mapper
 {
     public interface IOrderedMapperProfile
     {

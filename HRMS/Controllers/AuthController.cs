@@ -60,5 +60,14 @@ namespace HRMS.Controllers
         {
             return View("_Register");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.Logout();
+            return RedirectToAction("login", "auth");
+        }
+
     }
 }
