@@ -1,3 +1,15 @@
+@using System.Security.Claims
+@model HRMS.Models.Employee.EmployeeDetailsModel
+
+@{
+    ViewData["Title"] = "Employee";
+    var action = @Model.EmployeeId > 0 ? "Edit" : "Add";
+}
+
+@{
+    await Html.RenderPartialAsync("_Sidebar");
+}
+
 <!-- Layout container -->
 <div class="layout-page">
     <!-- Content wrapper -->
@@ -7,141 +19,150 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row">
                 <div class="col-md-12">
+                    <div id="messageDiv" class="alert alert-info alert-dismissible" role="alert" style="display: none">
+                        @Html.ValidationSummary()
+                        @ViewBag.SuccessMsg
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                     <div class="card mb-4">
                         <h5 class="card-header">Profile Details</h5>
                         <!-- Account -->
-                        <div class="card-body">
-                            <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                <img src="~/images/profile1.jpg" alt="user-avatar" class="d-block rounded" height="100"
-                                    width="100" id="uploadedAvatar" />
-                                <div class="button-wrapper">
-                                    <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
-                                        <span class="d-none d-sm-block">Upload new photo</span>
-                                        <i class="bx bx-upload d-block d-sm-none"></i>
-                                        <input type="file" id="upload" class="account-file-input" hidden
-                                            accept="image/png, image/jpeg" />
-                                    </label>
-                                    <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
-                                        <i class="bx bx-reset d-block d-sm-none"></i>
-                                        <span class="d-none d-sm-block">Reset</span>
-                                    </button>
+                        <form id="formAccountSettings" asp-action="@action" asp-controller="Employee" method="POST">
+                            @Html.AntiForgeryToken()
+                            <div class="card-body">
+                                <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                    <img src="~/images/profile1.jpg" alt="user-avatar" class="d-block rounded" height="100"
+                                         width="100" id="uploadedAvatar" />
+                                    <div class="button-wrapper" style="visibility:hidden">
+                                        <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
+                                            <span class="d-none d-sm-block">Upload new photo</span>
+                                            <i class="bx bx-upload d-block d-sm-none"></i>
+                                            <input type="file" id="upload" class="account-file-input" hidden
+                                                   accept="image/png, image/jpeg" />
+                                        </label>
+                                        <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
+                                            <i class="bx bx-reset d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">Reset</span>
+                                        </button>
 
-                                    <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
-                                </div>
-                                <div class="form-check btn-pinned" style="top: 5.75rem;right: 21rem;">
-                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck3" />
-                                    <label class="form-check-label form-label" for="defaultCheck3"> Is a manager
-                                    </label>
+                                        <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                                    </div>
+                                    @if (User.FindFirstValue(ClaimTypes.Role) != null && User.FindAll(ClaimTypes.Role).Any(r => r.Value == "Admin"))
+                                    {
+                                        <div class="form-check btn-pinned" style="top: 5.75rem;right: 21rem;">
+                                            @Html.CheckBoxFor(model=> model.IsManger, new { @class="form-check-input"})
+                                            @Html.LabelFor(model=> model.IsManger, "Is a manager", new { @class="form-check-label form-label"})
+                                        </div>
+                                    }
                                 </div>
                             </div>
-                        </div>
-                        <hr class="my-0" />
-                        <div class="card-body">
-                            <form id="formAccountSettings" method="POST" onsubmit="return false">
+                            <hr class="my-0" />
+                            <div class="card-body">
+                                @Html.HiddenFor(model=> model.EmployeeId)
                                 <div class="row">
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="firstName" class="form-label">First Name</label>
-                                        <input class="form-control" type="text" id="firstName" name="firstName"
-                                            value="John" autofocus />
+                                        @Html.LabelFor(model=> model.FirstName, "First Name", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.FirstName, new { @class="form-control", maxlength="50", required="required"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="lastName" class="form-label">Last Name</label>
-                                        <input class="form-control" type="text" name="lastName" id="lastName"
-                                            value="Doe" />
+                                        @Html.LabelFor(model=> model.LastName, "Last Name", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.LastName, new { @class="form-control", maxlength="50", required="required"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="email" class="form-label">E-mail</label>
-                                        <input class="form-control" type="text" id="email" name="email"
-                                            value="john.doe@example.com" placeholder="john.doe@example.com" />
+                                        @Html.LabelFor(model=> model.Email, "Email", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.Email, new { @class="form-control", type="email", maxlength="50", required="required"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label class="form-label" for="phoneNumber">Phone Number</label>
-                                        <div class="input-group input-group-merge">
-                                            <span class="input-group-text">BD (+88)</span>
-                                            <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
-                                                placeholder="202 555 0111" />
-                                        </div>
+                                        @Html.LabelFor(model=> model.PhoneNumber, "Phone Number", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.PhoneNumber, new { @class="form-control", maxlength="20"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="dateofBirth" class="form-label">Date of Birth</label>
-                                        <input class="form-control" type="text" id="dateofBirth" name="dateofBirth"
-                                            placeholder="California" />
+                                        @Html.LabelFor(model=> model.DateOfBirth, "Date of Birth", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.DateOfBirthStr, new { @class="form-control", type="date"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="nationality" class="form-label">Nationality</label>
-                                        <input class="form-control" type="text" id="nationality" name="nationality"
-                                            placeholder="California" />
+                                        @Html.LabelFor(model=> model.Nationality, "Nationality", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.Nationality, new { @class="form-control", maxlength="20"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="b" class="form-label">Blood Group</label>
-                                        <input type="text" class="form-control" id="b" name="b" placeholder="Address" />
+                                        @Html.LabelFor(model=> model.BloodGroup, "Blood Group", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.BloodGroup, new { @class="form-control", maxlength="5"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="g" class="form-label">Gender</label>
-                                        <select id="g" class="select2 form-select">
-                                            <option value="0">Male</option>
-                                            <option value="1">Female</option>
-                                        </select>
+                                        @Html.LabelFor(model=> model.Gender, "Gender", new { @class="form-label"})
+                                        @Html.DropDownListFor(mode=> mode.Gender, new List<SelectListItem>()
+                                        {
+                                        new SelectListItem()
+                                        {
+                                        Value = "M",
+                                        Text = "Male"
+                                        },
+                                        new SelectListItem()
+                                        {
+                                        Value = "F",
+                                        Text = "Female"
+                                        }
+                                        }, new { @class="form-select"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="nid" class="form-label">NID</label>
-                                        <input class="form-control" type="text" id="nid" name="nid"
-                                            placeholder="California" />
+                                        @Html.LabelFor(model=> model.NID, "NID", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.NID, new { @class="form-control", maxlength="15"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="pass" class="form-label">Passport No</label>
-                                        <input class="form-control" type="text" id="pass" name="pass"
-                                            placeholder="California" />
+                                        @Html.LabelFor(model=> model.PassportNo, "Passport No", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.PassportNo, new { @class="form-control", maxlength="15"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="tin" class="form-label">TIN</label>
-                                        <input class="form-control" type="text" id="tin" name="tin"
-                                            placeholder="California" />
+                                        @Html.LabelFor(model=> model.TIN, "TIN", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.TIN, new { @class="form-control", maxlength="15"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="taxC" class="form-label">Tax Circle</label>
-                                        <input class="form-control" type="text" id="taxC" name="taxC"
-                                            placeholder="California" />
+                                        @Html.LabelFor(model=> model.TaxCircel, "Tax Circle", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.TaxCircel, new { @class="form-control", maxlength="50"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="taxz" class="form-label">Tax zone</label>
-                                        <input type="text" class="form-control" id="taxz" name="taxz"
-                                            placeholder="231465" maxlength="6" />
+                                        @Html.LabelFor(model=> model.TaxZone, "Tax zone", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.TaxZone, new { @class="form-control", maxlength="50"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="ms" class="form-label">Marital Status</label>
-                                        <select id="ms" class="select2 form-select">
-                                            <option value="0">Unmarried</option>
-                                            <option value="1">Married</option>
-                                        </select>
+                                        @Html.LabelFor(model=> model.MaritalStatus, "Marital Status", new { @class="form-label"})
+                                        @Html.DropDownListFor(mode=> mode.MaritalStatus, new List<SelectListItem>()
+                                        {
+                                        new SelectListItem()
+                                        {
+                                        Value = "0",
+                                        Text = "Unmarried"
+                                        },
+                                        new SelectListItem()
+                                        {
+                                        Value = "1",
+                                        Text = "Married"
+                                        }
+                                        }, new { @class="form-select"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="r" class="form-label">Religion</label>
-                                        <input type="text" class="form-control" id="r" name="r" placeholder="231465"
-                                            maxlength="6" />
+                                        @Html.LabelFor(model=> model.Religion, "Religion", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.Religion, new { @class="form-control", maxlength="2-"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="pm" class="form-label">Personal Email</label>
-                                        <input type="text" class="form-control" id="pm" name="pm" placeholder="231465"
-                                            maxlength="6" />
+                                        @Html.LabelFor(model=> model.PersonalEmail, "Personal Email", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.PersonalEmail, new { @class="form-control", maxlength="50"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="pp" class="form-label">Personal Phone</label>
-                                        <input type="text" class="form-control" id="pp" name="pp" placeholder="231465"
-                                            maxlength="6" />
+                                        @Html.LabelFor(model=> model.PersonalPhone, "Personal Phone", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.PersonalPhone, new { @class="form-control", maxlength="15"})
                                     </div>
                                     <div class="mb-3 col-md-6 col-lg-4">
-                                        <label for="psm" class="form-label">Personal Mobile</label>
-                                        <input type="text" class="form-control" id="psm" name="psm" placeholder="231465"
-                                            maxlength="6" />
+                                        @Html.LabelFor(model=> model.PersonalMobile, "Personal Mobile", new { @class="form-label"})
+                                        @Html.TextBoxFor(model=> model.PersonalMobile, new { @class="form-control", maxlength="15"})
                                     </div>
                                 </div>
                                 <div class="mt-2">
-                                    <button type="submit" class="btn btn-primary me-2">Save changes</button>
+                                    <button type="submit" class="btn btn-primary me-2"><i class="fa fa-save"></i> Save changes</button>
                                     <button type="reset" class="btn btn-outline-secondary">Cancel</button>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                         <!-- /Account -->
                     </div>
                     <div class="card mb-4">
@@ -158,42 +179,54 @@
                                             <th>Changed type</th>
                                             <th>Reason</th>
                                             <th>Changed by</th>
-                                            <th>Actions</th>
+                                            @if (User.FindFirstValue(ClaimTypes.Role) != null && User.FindAll(ClaimTypes.Role).Any(r => r.Value == "Admin"))
+                                            {
+                                                <th>Actions</th>
+                                            }
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        <tr>
-                                            <td><span>370</span>
-                                                <input hidden class="form-control" type="text" id="firstName" name="firstName"
-                                                    value="John" />
-                                            </td>
-                                            <td>Md Abul</td>
-                                            <td>Kalam</td>
-                                            <td>abul.kalam@enosisbd.com</td>
-                                            <td>Senior Software Engineer</td>
-                                            <td><span class="badge bg-label-primary me-1">Active</span></td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown">
-                                                        <i class="fas fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="bx bx-edit-alt me-1"></i> Edit</a>
-                                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="bx bx-trash me-1"></i> Delete</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        @{
+                                            foreach (var his in Model.WorkHistoryDetails)
+                                            {
+                                                <tr>
+                                                    <td>@(((DateTime)his.EffectiveDate).ToString("dd/MM/yyyy"))</td>
+                                                    <td>@his.Designation</td>
+                                                    <td>@his.ManagerName</td>
+                                                    <td>@his.ChangedType</td>
+                                                    <td>@his.Reason</td>
+                                                    <td>@his.ModifiedBy</td>
+                                                    @if (User.FindFirstValue(ClaimTypes.Role) != null && User.FindAll(ClaimTypes.Role).Any(r => r.Value == "Admin"))
+                                                    {
+                                                        <td>
+                                                            <div class="dropdown">
+                                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                                data-bs-toggle="dropdown">
+                                                                    <i class="fas fa-ellipsis-v"></i>
+                                                                </button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="javascript:void(0);">
+                                                                        <i class="bx bx-edit-alt me-1"></i> Edit
+                                                                    </a>
+                                                                    <a class="dropdown-item" href="javascript:void(0);">
+                                                                        <i class="bx bx-trash me-1"></i> Delete
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            }
+                                        }
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="mt-4">
-                                <button type="submit" class="btn btn-primary me-2">Save changes</button>
-                                <button type="reset" class="btn btn-outline-secondary">Cancel</button>
-                            </div>
+                            @if (User.FindFirstValue(ClaimTypes.Role) != null && User.FindAll(ClaimTypes.Role).Any(r => r.Value == "Admin"))
+                            {
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary me-2"><i class="fa fa-plus" aria-hidden="true"></i> Add New Work History</button>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -206,9 +239,7 @@
     <!-- Content wrapper -->
 </div>
 <!-- / Layout page -->
-</div>
 
-<!-- Overlay -->
-<div class="layout-overlay layout-menu-toggle"></div>
-</div>
-<!-- / Layout wrapper -->
+<script>
+    var isSuccess = '@ViewBag.Success';
+</script>

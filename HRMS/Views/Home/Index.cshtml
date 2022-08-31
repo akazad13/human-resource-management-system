@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
+@{
+    await Html.RenderPartialAsync("_Sidebar");
+}
 <!-- Layout container -->
 <div class="layout-page">
     <!-- Content wrapper -->
@@ -34,11 +36,11 @@
                                         <span>@Model.Email</span>
                                     </div>
                                 </div>
-                                <a asp-action="edit" asp-controller="employee" asp-route-id="370">
+                                <a asp-action="Edit" asp-controller="Employee" asp-route-id="@Model.EmployeeId">
                                     <button type="button"
                                             class="btn btn-primary me-2 btn-lg btn-pinned"
                                             style="right: 7.75rem;top: 5.75rem;">
-                                        Edit
+                                        <i class="fa fa-edit"></i> Edit
                                     </button>
                                 </a>
                             </div>
@@ -60,7 +62,7 @@
                                 </div>
                                 <div class="mb-3 col-md-4">
                                     <div class="form-label"><small>Start date</small></div>
-                                    <div>@(Model.StartDate)</div>
+                                    <div>@Model.StartDate</div>
                                 </div>
                                 <div class="mb-3 col-md-4">
                                     <div class="form-label"><small>Accumulated tenure (duration)</small></div>
@@ -160,16 +162,15 @@
                                             foreach (var his in Model.WorkHistoryDetails)
                                             {
                                                 <tr>
-                                                    <td>@his.EffectiveDate</td>
+                                                    <td>@(((DateTime)his.EffectiveDate).ToString("dd/MM/yyyy"))</td>
                                                     <td>@his.Designation</td>
-                                                    <td>@his.ManagerId</td>
+                                                    <td>@his.ManagerName</td>
                                                     <td>@his.ChangedType</td>
                                                     <td>@his.Reason</td>
                                                     <td>@his.ModifiedBy</td>
                                                 </tr>
                                             }
                                         }
-
                                     </tbody>
                                 </table>
                             </div>

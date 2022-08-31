@@ -6,5 +6,7 @@ namespace HRMS.Application.Services.Employee
     {
         Task<IEnumerable<EmployeeData>> GetAll();
         Task<EmployeeDetails> Get(long empid);
+        Task<EmployeeDetails> GetByUserid(long userid);
+        Task<EmployeeDetails> Save(EmployeeDetails data);
     }
 }

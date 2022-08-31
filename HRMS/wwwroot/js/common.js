@@ -4,6 +4,11 @@
         $('#messageDiv').addClass("alert-danger");
         $('#messageDiv').css('display', '');
     }
+    else if (typeof (isSuccess) != 'undefined' && isSuccess == 'true') {
+        $('#messageDiv').removeClass("alert-info");
+        $('#messageDiv').addClass("alert-success");
+        $('#messageDiv').css('display', '');
+    }
 });
 
 

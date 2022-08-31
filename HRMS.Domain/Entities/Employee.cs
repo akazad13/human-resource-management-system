@@ -7,7 +7,6 @@ namespace HRMS.Domain.Entities
         public long Id { get; set; }
         public long UserId { get; set; }
         public User User { get; set; }
-        [Required(ErrorMessage = "Last Name is required")]
         public DateTime? DateofBirth { get; set; }
         [StringLength(20)]
         public string? Nationality { get; set; }
@@ -22,7 +21,7 @@ namespace HRMS.Domain.Entities
         [StringLength(50)]
         public string? TaxCircle { get; set; }
         [StringLength(50)]
-        public string? Taxzone { get; set; }
+        public string? TaxZone { get; set; }
         public int? MaritalStatus { get; set; }
         public char? Gender { get; set; }
         [StringLength(20)]

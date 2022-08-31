@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using HRMS.Application.Common.Interfaces;
-using HRMS.Application.Common.Utilities;
 using HRMS.Domain.Common;
 using HRMS.Infrastructure.Mapper;
 using Microsoft.AspNetCore.Authorization;
@@ -16,25 +15,17 @@ namespace HRMS.Infrastructure.Extensions
         public static void AddAppInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
-            services.Configure<ConfigModel>(configuration);
 
             services.AddHealthChecks();
 
             //make HttpContext available across the app
-            services.AddHttpContextAccessor();
+            //services.AddHttpContextAccessor();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
-
-            services.AddAuthentication(o =>
-            {
-                o.DefaultScheme = IdentityConstants.ApplicationScheme;
-                o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddIdentityCookies(o => { });
 
             services.AddAuthorization(options =>
             {
@@ -43,26 +34,16 @@ namespace HRMS.Infrastructure.Extensions
                 options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Manager"));
             });
 
-
-            //To generate the cache table follow: https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-6.0#distributed-sql-server-cache
-            //services.AddDistributedSqlServerCache(options =>
+            //services.AddSession(options =>
             //{
-            //    options.ConnectionString = configuration.GetValue<string>("DistCache:ConnectionString");
-            //    options.SchemaName = configuration.GetValue<string>("DistCache:SchemaName");
-            //    options.TableName = configuration.GetValue<string>("DistCache:TableName");
-            //    options.ExpiredItemsDeletionInterval = TimeSpan.FromMinutes(configuration.GetValue<double>("DistCache:ExpiredItemsDeletionInterval"));
+            //    options.Cookie.Name = ".HRMS_Session_";
+            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //    options.Cookie.SameSite = SameSiteMode.None;
+            //    options.Cookie.HttpOnly = true;
+            //    options.Cookie.IsEssential = true;
+
+            //    options.IdleTimeout = TimeSpan.FromMinutes(configuration.GetValue<double>("SessionTimeout"));
             //});
-
-            services.AddSession(options =>
-            {
-                options.Cookie.Name = ".HRMS_Session_";
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-
-                options.IdleTimeout = TimeSpan.FromMinutes(configuration.GetValue<double>("SessionTimeout"));
-            });
 
 
             services.AddAntiforgery(o =>
@@ -78,6 +59,12 @@ namespace HRMS.Infrastructure.Extensions
                 config.SlidingExpiration = true;
                 config.LoginPath = "/auth/login";
                 config.AccessDeniedPath = "/auth/accessdenied";
+                config.Cookie.Name = ".HRMS_Cookie_";
+                config.Cookie.SameSite = SameSiteMode.Lax;
+                config.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                config.Cookie.IsEssential = true;
+                config.Cookie.HttpOnly = true;
+                config.ExpireTimeSpan = TimeSpan.FromMinutes(configuration.GetValue<double>("SessionTimeout"));
             });
 
             //Form limit
@@ -106,8 +93,6 @@ namespace HRMS.Infrastructure.Extensions
             });
 
             services.AddSingleton(context => AddAutoMapper(new AppDomainTypeFinder()));
-
-
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
         }
 

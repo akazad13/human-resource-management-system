@@ -25,22 +25,18 @@ namespace HRMS.Persistence.Infrastructure
                     b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
             });
 
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-
-            IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
-            {
-                opt.Password.RequiredLength = 5;
-                opt.Password.RequireNonAlphanumeric = false;
-                opt.Password.RequiredUniqueChars = 0;
-            });
-
-            builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
-            builder.AddEntityFrameworkStores<ApplicationDbContext>()
+            services
+                .AddIdentity<User, Role>(opt =>
+                {
+                    opt.Password.RequiredLength = 5;
+                    opt.Password.RequireNonAlphanumeric = false;
+                    opt.Password.RequiredUniqueChars = 0;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager<SignInManager<User>>()
                 .AddRoleManager<RoleManager<Role>>()
                 .AddRoleValidator<RoleValidator<Role>>()
                 .AddDefaultTokenProviders();
-
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();

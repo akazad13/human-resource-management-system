@@ -69,5 +69,11 @@ namespace HRMS.Controllers
             return RedirectToAction("login", "auth");
         }
 
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View("AccessDenied");
+        }
+
     }
 }

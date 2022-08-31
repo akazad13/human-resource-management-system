@@ -6,8 +6,10 @@ namespace HRMS.Application.RepositoryInterfaces
     public interface IEmployeeRepository
     {
         Task<IEnumerable<EmployeeData>> All();
-        Task<EmployeeDetails> Get(long empid);
-        Task Commit();
+        Task<EmployeeDetails> GetDetails(long userid);
+        Task<EmployeeDetails> GetDetailsByUserid(long userid);
+        Task<Employee> Get(long empid);
+        Task<bool> Commit();
         Task Create(Employee entity);
         void Delete(Employee entity);
         void Update(Employee entity);

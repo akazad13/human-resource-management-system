@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, long, IdentityUserClaim<long>, UserRole, IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<User, Role, long, IdentityUserClaim<long>, UserRole, IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IDateTime _dateTime;
@@ -39,8 +39,8 @@ namespace HRMS.Infrastructure.Persistence
             builder.Entity<User>(u =>
             {
                 u.ToTable(name: "Users");
-                u.Property(x => x.UserName).IsRequired().HasMaxLength(20);
-                u.Property(x => x.NormalizedUserName).HasMaxLength(20);
+                u.Property(x => x.UserName).IsRequired().HasMaxLength(50);
+                u.Property(x => x.NormalizedUserName).HasMaxLength(50);
                 u.Property(x => x.PhoneNumber).HasMaxLength(20);
                 u.Property(x => x.Email).IsRequired().HasMaxLength(50);
                 u.Property(x => x.NormalizedEmail).HasMaxLength(50);

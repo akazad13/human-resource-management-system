@@ -5,6 +5,7 @@ using HRMS.Models;
 using HRMS.Models.Employee;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace HRMS.Controllers
 {
@@ -23,7 +24,8 @@ namespace HRMS.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = _mapper.Map<EmployeeDetails, EmployeeDetailsModel>(await _employeeService.Get(1));
+            long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userid);
+            var model = _mapper.Map<EmployeeDetails, EmployeeDetailsModel>(await _employeeService.GetByUserid(userid));
             ViewBag.activeMenu = "home";
             return View(model);
         }

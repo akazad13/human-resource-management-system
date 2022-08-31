@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HRMS.Domain.Entities;
 using HRMS.Domain.Models.Employee;
 using HRMS.Models.Employee;
 
@@ -11,8 +10,9 @@ namespace HRMS.Infrastructure.Mapper.Profiles
         public EmployeeProfile()
         {
             this.CreateMap<EmployeeData, EmployeeDataModel>();
-            this.CreateMap<WorkHistory, WorkHistoryModel>();
+            this.CreateMap<WorkHistoryDetails, WorkHistoryDetailsModel>();
             this.CreateMap<EmployeeDetails, EmployeeDetailsModel>();
+            this.CreateMap<EmployeeDetails, EmployeeDetailsModel>().ReverseMap();
         }
         #endregion
 

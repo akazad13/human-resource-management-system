@@ -1,5 +1,7 @@
 ﻿using HRMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HRMS.Application.Services.Auth
 {
@@ -31,11 +33,55 @@ namespace HRMS.Application.Services.Auth
             throw new Exception("Please enter valid credentials!");
         }
 
+        public async Task<User> Register(string? firstName,
+            string? lastName,
+            string? email,
+            string? phoneNumber,
+            string? password,
+            IEnumerable<string> assignedRoles
+        )
+        {
+            var response = await IsUserExist(email);
+            if (response == true)
+            {
+                throw new Exception($"There is already an user registered with this email!." );
+            }
+
+            var user = new User
+            {
+                UserName = email?.Split('@')[0],
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                PhoneNumber = phoneNumber
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRolesAsync(user, assignedRoles);
+            }
+
+            if (result.Succeeded)
+            {
+                return user;
+            }
+
+            throw new Exception($"Unable to create the user!.");
+        }
+
         public async Task<User> GetUser(int userid)
         {
             return await _userManager.FindByIdAsync(userid.ToString());
         }
 
+        public async Task<bool> IsUserExist(string? email)
+        {
+            if (email == null)
+                return false;
+            return await _userManager.Users.AnyAsync(u => u.Email == email);
+        }
         public async Task<bool> Logout()
         {
             await _signInManager.SignOutAsync();
