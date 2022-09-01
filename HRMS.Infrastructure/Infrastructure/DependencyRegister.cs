@@ -38,7 +38,7 @@ namespace HRMS.Persistence.Infrastructure
                 .AddRoleValidator<RoleValidator<Role>>()
                 .AddDefaultTokenProviders();
 
-            services.AddTransient<IDateTime, DateTimeService>();
+            services.AddSingleton<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddScoped<IUserRepository, UserRepository>();

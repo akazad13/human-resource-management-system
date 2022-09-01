@@ -55,11 +55,11 @@ namespace HRMS.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View("_Register");
-        }
+        //[HttpGet]
+        //public IActionResult Register()
+        //{
+        //    return View("_Register");
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]

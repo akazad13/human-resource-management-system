@@ -1,4 +1,3 @@
-using HRMS;
 using HRMS.Application.Infrastructure;
 using HRMS.Infrastructure.Extensions;
 using HRMS.Infrastructure.SeedDatabase;
@@ -7,9 +6,9 @@ using HRMS.Persistence.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAppInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAppInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
@@ -29,12 +28,10 @@ app.UseCookiePolicy();
 
 app.UseRouting();
 
-//app.UseSession();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHealthChecks("/healthz");
+//app.MapHealthChecks("/healthz");
 
 app.MapControllerRoute(
     name: "default",

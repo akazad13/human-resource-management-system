@@ -2,6 +2,7 @@
 using HRMS.Application.Common.Interfaces;
 using HRMS.Domain.Common;
 using HRMS.Infrastructure.Mapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -16,10 +17,7 @@ namespace HRMS.Infrastructure.Extensions
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
-            services.AddHealthChecks();
-
-            //make HttpContext available across the app
-            //services.AddHttpContextAccessor();
+            //services.AddHealthChecks();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -33,18 +31,6 @@ namespace HRMS.Infrastructure.Extensions
                 options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
                 options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Manager"));
             });
-
-            //services.AddSession(options =>
-            //{
-            //    options.Cookie.Name = ".HRMS_Session_";
-            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            //    options.Cookie.SameSite = SameSiteMode.None;
-            //    options.Cookie.HttpOnly = true;
-            //    options.Cookie.IsEssential = true;
-
-            //    options.IdleTimeout = TimeSpan.FromMinutes(configuration.GetValue<double>("SessionTimeout"));
-            //});
-
 
             services.AddAntiforgery(o =>
             {
@@ -70,8 +56,8 @@ namespace HRMS.Infrastructure.Extensions
             //Form limit
             services.Configure<FormOptions>(options =>
             {
-                options.ValueCountLimit = int.MaxValue; // 50000 items max
-                options.ValueLengthLimit = int.MaxValue; // 1000MB max len form data
+                options.ValueCountLimit = int.MaxValue; 
+                options.ValueLengthLimit = int.MaxValue;
             });
 
             services.AddControllersWithViews(options =>

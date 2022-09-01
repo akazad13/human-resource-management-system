@@ -20,7 +20,7 @@ namespace HRMS.Application.Services.Auth
 
             if (user == null)
             {
-                throw new Exception("There is no account exist!");
+                throw new Exception("Email or Password does not match!");
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
@@ -30,7 +30,7 @@ namespace HRMS.Application.Services.Auth
                 return true;
             }
 
-            throw new Exception("Please enter valid credentials!");
+            throw new Exception("Email or Password does not match!");
         }
 
         public async Task<User> Register(string? firstName,
