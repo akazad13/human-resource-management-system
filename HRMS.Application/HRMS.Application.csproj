@@ -7,13 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DTOs\Leave\**" />
+    <Compile Remove="Common\Utilities\**" />
     <Compile Remove="Handlers\**" />
     <Compile Remove="Queries\**" />
-    <EmbeddedResource Remove="DTOs\Leave\**" />
+    <EmbeddedResource Remove="Common\Utilities\**" />
     <EmbeddedResource Remove="Handlers\**" />
     <EmbeddedResource Remove="Queries\**" />
-    <None Remove="DTOs\Leave\**" />
+    <None Remove="Common\Utilities\**" />
     <None Remove="Handlers\**" />
     <None Remove="Queries\**" />
   </ItemGroup>
@@ -29,10 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HRMS.Domain\HRMS.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Common\Utilities\" />
   </ItemGroup>
 
 </Project>

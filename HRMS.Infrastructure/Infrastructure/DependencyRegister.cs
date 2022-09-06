@@ -3,6 +3,7 @@ using HRMS.Application.RepositoryInterfaces;
 using HRMS.Domain.Entities;
 using HRMS.Infrastructure.Identity;
 using HRMS.Infrastructure.Persistence;
+using HRMS.Infrastructure.SeedDatabase;
 using HRMS.Infrastructure.Services;
 using HRMS.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,8 @@ namespace HRMS.Persistence.Infrastructure
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
+            services.AddScoped<ISeed, Seed>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(
@@ -25,6 +28,7 @@ namespace HRMS.Persistence.Infrastructure
                     b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
             });
 
+            // Set Password rule and Identity Cokiee token provider
             services
                 .AddIdentity<User, Role>(opt =>
                 {

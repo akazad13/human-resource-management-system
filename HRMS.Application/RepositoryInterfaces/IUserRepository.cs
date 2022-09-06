@@ -5,6 +5,6 @@ namespace HRMS.Application.RepositoryInterfaces
     public interface IUserRepository
     {
         Task<bool> Commit();
-        Task<User> Get(long userid);
+        Task<User?> Get(long userid);
     }
 }

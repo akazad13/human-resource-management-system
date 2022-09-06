@@ -21,7 +21,7 @@
                 <div class="col-md-12">
                     <div id="messageDiv" class="alert alert-info alert-dismissible" role="alert" style="display: none">
                         @Html.ValidationSummary()
-                        @ViewBag.SuccessMsg
+                        @ViewBag.msg
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <div class="card mb-4">
@@ -224,7 +224,7 @@
                             @if (User.FindFirstValue(ClaimTypes.Role) != null && User.FindAll(ClaimTypes.Role).Any(r => r.Value == "Admin"))
                             {
                                 <div class="mt-4">
-                                    <button type="submit" class="btn btn-primary me-2"><i class="fa fa-plus" aria-hidden="true"></i> Add New Work History</button>
+                                    <button type="submit" class="btn btn-primary me-2 disabled" title="Function is not implemented yet."><i class="fa fa-plus" aria-hidden="true"></i> Add New Work History</button>
                                 </div>
                             }
                         </div>

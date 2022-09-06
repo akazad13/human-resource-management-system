@@ -20,6 +20,10 @@ namespace HRMS.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (User != null && User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("index", "home");
+            }
             return PartialView("_Login", new AuthRequest());
         }
 
@@ -43,6 +47,7 @@ namespace HRMS.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex.Message, ex);
                     ModelState.AddModelError("loginFailed", ex.Message);
                     ViewBag.Success = "false";
                     return PartialView("_Login", authRequest);
@@ -54,12 +59,6 @@ namespace HRMS.Controllers
                 return PartialView("_Login", authRequest);
             }
         }
-
-        //[HttpGet]
-        //public IActionResult Register()
-        //{
-        //    return View("_Register");
-        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]

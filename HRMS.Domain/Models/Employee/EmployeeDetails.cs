@@ -11,9 +11,9 @@ namespace HRMS.Domain.Models.Employee
         public string? Designation { get; set; }
         public bool IsManger { get; set; }
         public string? ReportsToString { get; set; }
-        public string? TimeInCurrentPosition { get; set; }
+        public double? TimeInCurrentPosition { get; set; }
         public string? StartDate { get; set; }
-        public string? AccumulatedTenure { get; set; }
+        public double? AccumulatedTenure { get; set; }
         public string? PhoneNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? DateOfBirthStr { get; set; }

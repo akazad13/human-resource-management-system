@@ -12,7 +12,6 @@ namespace HRMS.Application.Services.Auth
             string? password,
             IEnumerable<string> assignedRoles
         );
-        Task<User> GetUser(int userid);
         Task<bool> IsUserExist(string? email);
         Task<bool> Logout();
     }

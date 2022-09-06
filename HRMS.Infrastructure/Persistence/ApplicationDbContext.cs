@@ -1,5 +1,4 @@
 ﻿using HRMS.Application.Common.Interfaces;
-using HRMS.Domain.Common;
 using HRMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

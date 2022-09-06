@@ -9,10 +9,16 @@ namespace HRMS.Controllers
 {
     public class EmployeeController : Controller
     {
+        private readonly ILogger<EmployeeController> _logger;
         private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
-        public EmployeeController(IEmployeeService employeeService, IMapper mapper)
+        public EmployeeController(
+            ILogger<EmployeeController> logger,
+            IEmployeeService employeeService,
+            IMapper mapper
+        )
         {
+            _logger = logger;
             _employeeService = employeeService;
             _mapper = mapper;
         }
@@ -21,9 +27,17 @@ namespace HRMS.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Index()
         {
-            var model = _mapper.Map<IEnumerable<EmployeeData>, IEnumerable<EmployeeDataModel>>(await _employeeService.GetAll());
-            ViewBag.activeMenu = "employee";
-            return View(model);
+            try
+            {
+                var model = _mapper.Map<List<EmployeeData>?, List<EmployeeDataModel>?>(await _employeeService.GetAll());
+                ViewBag.activeMenu = "employee";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return View(new List<EmployeeDataModel>());
+            }
         }
 
         [HttpGet]
@@ -35,15 +49,27 @@ namespace HRMS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(long id = 0)
+        public async Task<IActionResult> Edit(long id)
         {
             ViewBag.activeMenu = "employee";
-            if (id != 0)
+            try
             {
-                var model = _mapper.Map<EmployeeDetails, EmployeeDetailsModel>(await _employeeService.Get(id));
+                var model = _mapper.Map<EmployeeDetails?, EmployeeDetailsModel?>(await _employeeService.Get(id));
+                if (model == null)
+                {
+                    ViewBag.Success = "false";
+                    ViewBag.msg = $"Can not fetch data to be edited.";
+                    return View("_AddEditEmployee", new EmployeeDetailsModel());
+                }
                 return View("_AddEditEmployee", model);
             }
-            return View("_AddEditEmployee", new EmployeeDetailsModel());
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                ViewBag.Success = "false";
+                ViewBag.msg = $"Can not fetch data to be edited.";
+                return View("_AddEditEmployee", new EmployeeDetailsModel());
+            }
         }
 
         [HttpPost]
@@ -51,66 +77,72 @@ namespace HRMS.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Add(EmployeeDetailsModel model)
         {
-            ViewBag.activeMenu = "employee";
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var p = await _employeeService.Save(_mapper.Map<EmployeeDetailsModel, EmployeeDetails>(model));
-                    ViewBag.Success = "true";
-                    ViewBag.SuccessMsg = "Successfully Added.";
-                    return View("_AddEditEmployee", model);
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("Add fails: ", ex.Message);
-                    ViewBag.Success = "false";
-                    return View("_AddEditEmployee", model);
-                }
-            }
-            else
-            {
-                ViewBag.Success = "false";
-                return View("_AddEditEmployee", model);
-            }
+            return await Save(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EmployeeDetailsModel model)
         {
+            return await Save(model);
+        }
+
+        //public IActionResult AddEditWorkHistoryModal(long employeeId, long workHxId)
+        //{
+        //    if (workHxId == 0)
+        //    {
+        //        return PartialView("_AddEditWorkHistoryModal", new WorkHistoryDetailsModel() { EmployeeId = employeeId });
+        //    }
+
+        //    return PartialView("_AddEditWorkHistoryModal", new WorkHistoryDetailsModel() { EmployeeId = employeeId });
+        //}
+
+        #region Private Methods
+        private async Task<IActionResult> Save(EmployeeDetailsModel model)
+        {
             ViewBag.activeMenu = "employee";
-            if (ModelState.IsValid)
+            try
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    var p = await _employeeService.Save(_mapper.Map<EmployeeDetailsModel, EmployeeDetails>(model));
-                    ViewBag.Success = "true";
-                    ViewBag.SuccessMsg = "Successfully Updated.";
-                    return View("_AddEditEmployee", model);
+                    try
+                    {
+                        var ret = await _employeeService.Save(_mapper.Map<EmployeeDetailsModel, EmployeeDetails>(model));
+                        if (ret == 0)
+                        {
+                            ViewBag.Success = "false";
+                            ViewBag.msg = "Failed to save data.";
+                        }
+                        else
+                        {
+                            ViewBag.Success = "true";
+                            ViewBag.msg = $"Successfully {(model.EmployeeId == 0 ? "Added" : "Updated")}.";
+                            model.EmployeeId = ret;
+                        }
+                        return View("_AddEditEmployee", model);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex.Message, ex);
+                        ViewBag.msg = $"{(model.EmployeeId == 0 ? "Add" : "Update")} fails: ";
+                        ViewBag.Success = "false";
+                        return View("_AddEditEmployee", model);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    ModelState.AddModelError("Update fails: ", ex.Message);
                     ViewBag.Success = "false";
                     return View("_AddEditEmployee", model);
                 }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
+                ViewBag.msg = $"{(model.EmployeeId == 0 ? "Add" : "Update")} fails: ";
                 ViewBag.Success = "false";
                 return View("_AddEditEmployee", model);
             }
         }
-
-        public IActionResult AddEditWorkHistoryModal(long employeeId, long workHxId)
-        {
-            if (workHxId == 0)
-            {
-                return PartialView("_AddEditWorkHistoryModal", new WorkHistoryDetailsModel() { EmployeeId = employeeId });
-            }
-
-            return PartialView("_AddEditWorkHistoryModal", new WorkHistoryDetailsModel() { EmployeeId = employeeId });
-        }
+        #endregion
     }
 }

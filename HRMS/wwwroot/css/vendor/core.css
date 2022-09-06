@@ -2786,7 +2786,7 @@ textarea.form-control-lg {
   box-shadow: none;
 }
 .btn:disabled, .btn.disabled, fieldset:disabled .btn {
-  pointer-events: none;
+/*  pointer-events: none;*/
   opacity: 0.65;
 }
 
@@ -3110,7 +3110,7 @@ textarea.form-control-lg {
 }
 .dropdown-item.disabled, .dropdown-item:disabled {
   color: #c7cdd4;
-  pointer-events: none;
+ /* pointer-events: none;*/
   background-color: transparent;
 }
 
@@ -6272,7 +6272,7 @@ a.invert-bg-dark:hover, a.invert-bg-dark:focus {
   cursor: pointer;
 }
 .btn.disabled, .btn:disabled {
-  cursor: default;
+  cursor: not-allowed;
 }
 
 .btn .badge {

@@ -2,11 +2,9 @@
 using HRMS.Application.Common.Interfaces;
 using HRMS.Domain.Common;
 using HRMS.Infrastructure.Mapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace HRMS.Infrastructure.Extensions
@@ -25,6 +23,8 @@ namespace HRMS.Infrastructure.Extensions
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
+            // Added authorization policies that can be used to authorize users based on their role combinations
+            // while accessing any route (policy)
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
@@ -32,6 +32,7 @@ namespace HRMS.Infrastructure.Extensions
                 options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Manager"));
             });
 
+            // Added antiforgery token provider
             services.AddAntiforgery(o =>
             {
                 o.SuppressXFrameOptionsHeader = true;
@@ -43,8 +44,8 @@ namespace HRMS.Infrastructure.Extensions
             services.ConfigureApplicationCookie(config =>
             {
                 config.SlidingExpiration = true;
-                config.LoginPath = "/auth/login";
-                config.AccessDeniedPath = "/auth/accessdenied";
+                config.LoginPath = "/auth/login";               // redirect user to this path if they are not authenticaed while accessing any url that requries authentication
+                config.AccessDeniedPath = "/auth/accessdenied";  // access denied path
                 config.Cookie.Name = ".HRMS_Cookie_";
                 config.Cookie.SameSite = SameSiteMode.Lax;
                 config.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
@@ -63,15 +64,16 @@ namespace HRMS.Infrastructure.Extensions
             services.AddControllersWithViews(options =>
             {
                 options.MaxModelBindingCollectionSize = int.MaxValue;
-                //  for adding authentication check
+                //  for adding authentication check by default to every route unless specified by AllowAnynomous
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             }).AddNewtonsoftJson(options =>
             {
-                options.UseMemberCasing();
+                options.UseMemberCasing();  // tell json serializer the casing of the property
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
+            // Add mvc to service collection
             services.AddMvc(options =>
             {
                 options.MaxModelBindingCollectionSize = int.MaxValue;

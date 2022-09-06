@@ -1,36 +1,48 @@
 ﻿using HRMS.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 
 namespace HRMS.Application.Services.Auth
 {
     internal class AuthService : IAuthService
     {
+        private readonly ILogger<AuthService> _logger;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AuthService(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager
+        )
         {
             _userManager = userManager;
             _signInManager = signInManager;
         }
         public async Task<bool> Login(string email, string password)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
+            try
             {
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user == null)
+                {
+                    throw new Exception("Email or Password does not match!");
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+
                 throw new Exception("Email or Password does not match!");
             }
-
-            var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
-
-            if (result.Succeeded)
+            catch (Exception ex)
             {
-                return true;
+                _logger.LogError(ex.Message, ex);
+                return false;
             }
-
-            throw new Exception("Email or Password does not match!");
         }
 
         public async Task<User> Register(string? firstName,
@@ -41,51 +53,70 @@ namespace HRMS.Application.Services.Auth
             IEnumerable<string> assignedRoles
         )
         {
-            var response = await IsUserExist(email);
-            if (response == true)
+            try
             {
-                throw new Exception($"There is already an user registered with this email!." );
+                var response = await IsUserExist(email);
+                if (response == true)
+                {
+                    throw new Exception($"There is already an user registered with this email!.");
+                }
+
+                var user = new User
+                {
+                    UserName = email?.Split('@')[0],
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    PhoneNumber = phoneNumber
+                };
+
+                var result = await _userManager.CreateAsync(user, password);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRolesAsync(user, assignedRoles);
+                }
+
+                if (result.Succeeded)
+                {
+                    return user;
+                }
+
+                throw new Exception($"Unable to create the user!.");
             }
-
-            var user = new User
+            catch (Exception ex)
             {
-                UserName = email?.Split('@')[0],
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName,
-                PhoneNumber = phoneNumber
-            };
-
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRolesAsync(user, assignedRoles);
+                _logger.LogError(ex.Message, ex);
+                throw new Exception($"Unable to create the user!.");
             }
-
-            if (result.Succeeded)
-            {
-                return user;
-            }
-
-            throw new Exception($"Unable to create the user!.");
-        }
-
-        public async Task<User> GetUser(int userid)
-        {
-            return await _userManager.FindByIdAsync(userid.ToString());
         }
 
         public async Task<bool> IsUserExist(string? email)
         {
-            if (email == null)
+            try
+            {
+                if (email == null)
+                    return false;
+                return await _userManager.Users.AnyAsync(u => u.Email == email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
                 return false;
-            return await _userManager.Users.AnyAsync(u => u.Email == email);
+            }
         }
         public async Task<bool> Logout()
         {
-            await _signInManager.SignOutAsync();
-            return true;
+            try
+            {
+                await _signInManager.SignOutAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return false;
+            }
         }
     }
 }

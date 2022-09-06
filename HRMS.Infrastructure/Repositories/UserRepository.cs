@@ -2,6 +2,7 @@
 using HRMS.Domain.Entities;
 using HRMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HRMS.Persistence.Repositories
 {
@@ -9,20 +10,38 @@ namespace HRMS.Persistence.Repositories
     {
 
         private readonly ApplicationDbContext _appDbContext;
+        private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(ApplicationDbContext appDbContext)
+        public UserRepository(ILogger<UserRepository> logger, ApplicationDbContext appDbContext)
         {
+            _logger = logger;
             _appDbContext = appDbContext;
         }
 
         public async Task<bool> Commit()
         {
-            return await _appDbContext.SaveChangesAsync() > 0;
+            try
+            {
+                return await _appDbContext.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return false;
+            }
         }
 
-        public async Task<User> Get(long userid)
+        public async Task<User?> Get(long userid)
         {
-            return await _appDbContext.Users.Where(u=> u.Id == userid).FirstOrDefaultAsync();
+            try
+            {
+                return await _appDbContext.Users.Where(u => u.Id == userid).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return null;
+            }
         }
     }
 }
