@@ -20,7 +20,7 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
@@ -77,7 +77,7 @@ else
                     }
                 }
 
-                context.Response.Redirect(builder.Configuration.GetValue<string>("hostURL") + "Home/Error");
+                context.Response.Redirect("Home/Error");
 
                 await Task.CompletedTask;
             }
