@@ -91,6 +91,19 @@ namespace HRMS.Persistence.Repositories
             }
         }
 
+        public async Task<List<Employee>?> GetManagers()
+        {
+            try
+            {
+                return await _appDbContext.Employees.Where(emp => emp.IsManger == true).Include(emp => emp.User).AsNoTracking().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return null;
+            }
+        }
+
         public async Task Create(Employee entity)
         {
             try
@@ -160,7 +173,7 @@ namespace HRMS.Persistence.Repositories
                     EffectiveDate = wh.EffectiveDate,
                     Designation = wh.Designation,
                     ManagerId = wh.ManagerId,
-                    ManagerName = wh.Manager == null ? "" : wh.Manager.User.FirstName + " " + wh.Manager.User.LastName,
+                    ManagerName = wh.Manager == null ? "" : $"{ wh.Manager.User.FirstName } {wh.Manager.User.LastName}",
                     ChangedType = wh.ChangedType,
                     Reason = wh.Reason,
                     ModifiedBy = wh.ModifiedBy,

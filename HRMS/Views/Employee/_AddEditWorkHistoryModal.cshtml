@@ -1,46 +1,51 @@
-﻿<!-- Modal -->
-<div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1">
+﻿@model HRMS.Models.Employee.WorkHistoryDetailsModel
+
+<!-- Modal -->
+<div class="modal fade" id="addEditWorkHxModal" data-bs-backdrop="static" tabindex="-1">
     <div class="modal-dialog">
         <form class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="backDropModalTitle">Modal title</h5>
+                <h5 class="modal-title" id="backDropModalTitle">Add/Edit Employee Work History</h5>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row g-2">
                     <div class="col mb-3">
-                        <label for="nameBackdrop" class="form-label">Name</label>
-                        <input type="text"
-                               id="nameBackdrop"
-                               class="form-control"
-                               placeholder="Enter Name" />
+                        @Html.LabelFor(model=> model.EffectiveDate, "Effective Date", new { @class="form-label"})
+                        @Html.TextBoxFor(model=> model.EffectiveDate, new { @class="form-control", type="date"})
+                    </div>
+                    <div class="col mb-3">
+                        @Html.LabelFor(model=> model.Designation, "Desgination", new { @class="form-label"})
+                        @Html.TextBoxFor(model=> model.Designation, new { @class="form-control", maxlength="50", required="required" })
                     </div>
                 </div>
                 <div class="row g-2">
-                    <div class="col mb-0">
-                        <label for="emailBackdrop" class="form-label">Email</label>
-                        <input type="text"
-                               id="emailBackdrop"
-                               class="form-control"
-                               placeholder="xxxx@xxx.xx" />
+                    <div class="col mb-3">
+                        @Html.LabelFor(model=> model.ManagerList, "Manager", new { @class="form-label"})
+                        @Html.DropDownListFor(model=> model.ManagerId, Model.ManagerList, new { @class="form-select"})
                     </div>
-                    <div class="col mb-0">
-                        <label for="dobBackdrop" class="form-label">DOB</label>
-                        <input type="text"
-                               id="dobBackdrop"
-                               class="form-control"
-                               placeholder="DD / MM / YY" />
+                    <div class="col mb-3">
+                        @Html.LabelFor(model=> model.ChangedType, "Changed Type", new { @class="form-label"})
+                        @Html.TextBoxFor(model=> model.ChangedType, new { @class="form-control", maxlength="50", required="required" })
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col mb-0">
+                        @Html.LabelFor(model=> model.Reason, "Reason", new { @class="form-label"})
+                        @Html.TextBoxFor(model=> model.Reason, new { @class="form-control", maxlength="50", required="required" })
+                    </div>
+                </div>
+                @Html.HiddenFor(model=> model.EmployeeId)
+                @Html.HiddenFor(model => model.Id)
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     Close
                 </button>
-                <button type="button" class="btn btn-primary">Save</button>
+                <button id="btnSaveWrokHistory" type="button" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>

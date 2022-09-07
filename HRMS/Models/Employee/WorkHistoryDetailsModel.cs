@@ -1,4 +1,6 @@
-﻿namespace HRMS.Models.Employee
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace HRMS.Models.Employee
 {
     public class WorkHistoryDetailsModel
     {
@@ -12,5 +14,6 @@
         public string? Reason { get; set; }
         public string? ModifiedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public IEnumerable<SelectListItem>? ManagerList { get; set; }
     }
 }

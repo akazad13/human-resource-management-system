@@ -24,7 +24,6 @@ namespace HRMS.Controllers
 
         public async Task<IActionResult> Index()
         {
-            throw new Exception("Some exception");
             long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out long userid);
             var model = _mapper.Map<EmployeeDetails?, EmployeeDetailsModel?>(await _employeeService.GetByUserid(userid));
             ViewBag.activeMenu = "home";

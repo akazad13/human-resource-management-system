@@ -74,6 +74,7 @@ namespace HRMS.Application.Services.Employee
                 return null;
             }
         }
+
         public async Task<long> Save(EmployeeDetails data)
         {
             try
@@ -138,6 +139,11 @@ namespace HRMS.Application.Services.Employee
                 _logger.LogError(ex.Message, ex);
                 return 0;
             }
+        }
+
+        public async Task<List<Domain.Entities.Employee>?> GetManagers()
+        {
+            return await _employeeRepositroy.GetManagers();
         }
     }
 }

@@ -6,18 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, long, IdentityUserClaim<long>, UserRole, IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, long, IdentityUserClaim<long>, UserRole, IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>, IApplicationDbContext
     {
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IDateTime _dateTime;
-
         public ApplicationDbContext(
-            DbContextOptions<ApplicationDbContext> options,
-            ICurrentUserService currentUserService,
-            IDateTime dateTime) : base(options)
+            DbContextOptions<ApplicationDbContext> options
+        ) : base(options)
         {
-            _currentUserService = currentUserService;
-            _dateTime = dateTime;
         }
 
         public DbSet<Employee> Employees { get; set; }

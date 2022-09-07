@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using HRMS.Application.Services.Employee;
+using HRMS.Domain.Entities;
 using HRMS.Domain.Models.Employee;
 using HRMS.Models.Employee;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HRMS.Controllers
 {
@@ -11,16 +13,19 @@ namespace HRMS.Controllers
     {
         private readonly ILogger<EmployeeController> _logger;
         private readonly IEmployeeService _employeeService;
+        private readonly IWorkHistoryService _workHistoryService;
         private readonly IMapper _mapper;
         public EmployeeController(
             ILogger<EmployeeController> logger,
             IEmployeeService employeeService,
+            IWorkHistoryService workHistoryService,
             IMapper mapper
         )
         {
             _logger = logger;
             _employeeService = employeeService;
             _mapper = mapper;
+            _workHistoryService = workHistoryService;
         }
 
         [HttpGet]
@@ -87,58 +92,109 @@ namespace HRMS.Controllers
             return await Save(model);
         }
 
-        //public IActionResult AddEditWorkHistoryModal(long employeeId, long workHxId)
-        //{
-        //    if (workHxId == 0)
-        //    {
-        //        return PartialView("_AddEditWorkHistoryModal", new WorkHistoryDetailsModel() { EmployeeId = employeeId });
-        //    }
+        [HttpGet]
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> AddEditWorkHistoryModal(long employeeId, long workHxId)
+        {
+            var managers = await _employeeService.GetManagers();
+            var model = new WorkHistoryDetailsModel
+            {
+                ManagerList = managers?.Select(m => new SelectListItem()
+                {
+                    Value = m.Id.ToString(),
+                    Text = $"{m.User?.FirstName} {m.User?.LastName}"
+                }),
+                EmployeeId = employeeId,
+                Id = workHxId
+            };
+            return PartialView("_AddEditWorkHistoryModal", model);
+        }
 
-        //    return PartialView("_AddEditWorkHistoryModal", new WorkHistoryDetailsModel() { EmployeeId = employeeId });
-        //}
+        [HttpPost]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddEditWorkHistoryModal(WorkHistoryDetailsModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var id = await _workHistoryService.Save(_mapper.Map<WorkHistoryDetailsModel, WorkHistory>(model));
+                    if (id != 0)
+                    {
+                        return Json(new
+                        {
+                            status = "success",
+                            message = "Successfully Saved.",
+                            id = id
+                        }, new Newtonsoft.Json.JsonSerializerSettings());
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            status = "failed",
+                            message = "Failed to Save.",
+                            id = 0
+                        }, new Newtonsoft.Json.JsonSerializerSettings());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message, ex);
+                    return Json(new
+                    {
+                        status = "failed",
+                        message = "Internal problem, please try again!",
+                        id = 0
+                    }, new Newtonsoft.Json.JsonSerializerSettings());
+                }
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = "failed",
+                    message = "Invalid data.",
+                    id = 0
+                }, new Newtonsoft.Json.JsonSerializerSettings());
+            }
+        }
+
 
         #region Private Methods
         private async Task<IActionResult> Save(EmployeeDetailsModel model)
         {
             ViewBag.activeMenu = "employee";
-            try
+
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                try
                 {
-                    try
+                    var ret = await _employeeService.Save(_mapper.Map<EmployeeDetailsModel, EmployeeDetails>(model));
+                    if (ret == 0)
                     {
-                        var ret = await _employeeService.Save(_mapper.Map<EmployeeDetailsModel, EmployeeDetails>(model));
-                        if (ret == 0)
-                        {
-                            ViewBag.Success = "false";
-                            ViewBag.msg = "Failed to save data.";
-                        }
-                        else
-                        {
-                            ViewBag.Success = "true";
-                            ViewBag.msg = $"Successfully {(model.EmployeeId == 0 ? "Added" : "Updated")}.";
-                            model.EmployeeId = ret;
-                        }
-                        return View("_AddEditEmployee", model);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex.Message, ex);
-                        ViewBag.msg = $"{(model.EmployeeId == 0 ? "Add" : "Update")} fails: ";
                         ViewBag.Success = "false";
-                        return View("_AddEditEmployee", model);
+                        ViewBag.msg = "Failed to save data.";
                     }
+                    else
+                    {
+                        ViewBag.Success = "true";
+                        ViewBag.msg = $"Successfully {(model.EmployeeId == 0 ? "Added" : "Updated")}.";
+                        model.EmployeeId = ret;
+                    }
+                    return View("_AddEditEmployee", model);
                 }
-                else
+                catch (Exception ex)
                 {
+                    _logger.LogError(ex.Message, ex);
+                    ViewBag.msg = $"{(model.EmployeeId == 0 ? "Add" : "Update")} fails: ";
                     ViewBag.Success = "false";
                     return View("_AddEditEmployee", model);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex.Message, ex);
-                ViewBag.msg = $"{(model.EmployeeId == 0 ? "Add" : "Update")} fails: ";
                 ViewBag.Success = "false";
                 return View("_AddEditEmployee", model);
             }

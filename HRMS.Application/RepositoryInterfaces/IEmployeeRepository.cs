@@ -9,6 +9,7 @@ namespace HRMS.Application.RepositoryInterfaces
         Task<EmployeeDetails?> GetDetails(long userid);
         Task<EmployeeDetails?> GetDetailsByUserid(long userid);
         Task<Employee?> Get(long empid);
+        Task<List<Employee>?> GetManagers();
         Task<bool> Commit();
         Task Create(Employee entity);
         void Delete(Employee entity);

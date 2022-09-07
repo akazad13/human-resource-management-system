@@ -28,6 +28,8 @@ namespace HRMS.Persistence.Infrastructure
                     b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
             });
 
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
             // Set Password rule and Identity Cokiee token provider
             services
                 .AddIdentity<User, Role>(opt =>
@@ -47,6 +49,7 @@ namespace HRMS.Persistence.Infrastructure
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IWorkHistoryRepository, WorkHistoryRepository>();
 
             return services;
         }

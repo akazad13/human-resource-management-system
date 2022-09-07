@@ -10,11 +10,12 @@ namespace HRMS.Application.Infrastructure
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            
+
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IWorkHistoryService, WorkHistoryService>();
 
             return services;
         }
