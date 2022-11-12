@@ -12,11 +12,13 @@ namespace HRMS.Application.Services.Auth
         private readonly UserManager<User> _userManager;
         public AuthService(
             UserManager<User> userManager,
-            SignInManager<User> signInManager
+            SignInManager<User> signInManager,
+            ILogger<AuthService> logger
         )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
         public async Task<bool> Login(string email, string password)
         {
@@ -40,7 +42,7 @@ namespace HRMS.Application.Services.Auth
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return false;
             }
         }
@@ -86,7 +88,7 @@ namespace HRMS.Application.Services.Auth
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 throw new Exception($"Unable to create the user!.");
             }
         }
@@ -101,7 +103,7 @@ namespace HRMS.Application.Services.Auth
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return false;
             }
         }
@@ -114,7 +116,7 @@ namespace HRMS.Application.Services.Auth
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return false;
             }
         }

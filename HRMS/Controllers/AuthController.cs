@@ -42,12 +42,14 @@ namespace HRMS.Controllers
                     }
                     else
                     {
-                        return BadRequest();
+                        ModelState.AddModelError("loginFailed", "Invalid Email or Password!");
+                        ViewBag.Success = "false";
+                        return PartialView("_Login", authRequest);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message, ex);
+                    _logger.LogError(ex, ex.Message);
                     ModelState.AddModelError("loginFailed", ex.Message);
                     ViewBag.Success = "false";
                     return PartialView("_Login", authRequest);

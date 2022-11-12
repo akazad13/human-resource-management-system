@@ -26,7 +26,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return false;
             }
         }
@@ -46,7 +46,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
@@ -59,7 +59,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
@@ -73,7 +73,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
@@ -86,7 +86,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
@@ -99,7 +99,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
@@ -112,7 +112,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
             }
         }
 
@@ -125,7 +125,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
             }
         }
         public void Update(Employee entity)
@@ -136,7 +136,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
             }
         }
 

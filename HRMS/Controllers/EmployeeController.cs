@@ -40,7 +40,7 @@ namespace HRMS.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return View(new List<EmployeeDataModel>());
             }
         }
@@ -70,7 +70,7 @@ namespace HRMS.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 ViewBag.Success = "false";
                 ViewBag.msg = $"Can not fetch data to be edited.";
                 return View("_AddEditEmployee", new EmployeeDetailsModel());
@@ -141,7 +141,7 @@ namespace HRMS.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message, ex);
+                    _logger.LogError(ex, ex.Message);
                     return Json(new
                     {
                         status = "failed",
@@ -187,7 +187,7 @@ namespace HRMS.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message, ex);
+                    _logger.LogError(ex, ex.Message);
                     ViewBag.msg = $"{(model.EmployeeId == 0 ? "Add" : "Update")} fails: ";
                     ViewBag.Success = "false";
                     return View("_AddEditEmployee", model);

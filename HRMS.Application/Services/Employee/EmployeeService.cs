@@ -39,7 +39,7 @@ namespace HRMS.Application.Services.Employee
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
@@ -70,7 +70,7 @@ namespace HRMS.Application.Services.Employee
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
@@ -136,7 +136,7 @@ namespace HRMS.Application.Services.Employee
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return 0;
             }
         }

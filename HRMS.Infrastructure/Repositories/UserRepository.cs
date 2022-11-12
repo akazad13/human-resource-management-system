@@ -26,7 +26,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return false;
             }
         }
@@ -39,7 +39,7 @@ namespace HRMS.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, ex.Message);
                 return null;
             }
         }
